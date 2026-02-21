@@ -11,8 +11,14 @@ loadFont("font", "/assets/fonts/menufont.ttf");
 
 console.log("starting")
 
+scene("calibrate",()=>{
+
+
+  
+})
+
 scene("menu",()=>{
-  add([pos(center()),
+  add([pos(width()/4,height()/4),
     text("PLACE HOLDER TITLE",{
       font:"font",
       size: width() / 25,
@@ -25,6 +31,50 @@ scene("menu",()=>{
     })
     })
   ]);
+  function addButton(
+    txt = "start game",
+    p = vec2(200, 100),
+    f = () => debug.log("hello"),
+) {
+    // add a parent background object
+    const btn = add([
+        rect(240, 80, { radius: 8 }),
+        pos(p),
+        area(),
+        scale(1),
+        anchor("center"),
+        outline(4),
+        color(255, 255, 255),
+    ]);
+
+    // add a child object that displays the text
+    btn.add([
+        text(txt),
+        anchor("center"),
+        color(0, 0, 0),
+    ]);
+
+    // onHoverUpdate() comes from area() component
+    // it runs every frame when the object is being hovered
+    btn.onHoverUpdate(() => {
+        const t = time() * 10;
+        btn.scale = vec2(1.2);
+        setCursor("pointer");
+    });
+    // onHoverEnd() comes from area() component
+    // it runs once when the object stopped being hovered
+    btn.onHoverEnd(() => {
+        btn.scale = vec2(1);
+    });
+    // onClick() comes from area() component
+    // it runs once when the object is clicked
+    btn.onClick(f);
+
+    return btn;
+}
+
+// Adds the buttons with the function we added
+addButton("Start", vec2(width()/2, height()/1.5), () => go("calibrate"));
 })
 go("menu")
 
