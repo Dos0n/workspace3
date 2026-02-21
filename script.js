@@ -4,16 +4,14 @@ let pointsLeft = 9;
 const CLICKS_PER_POINT = 10;
 let isCalibrated = false;
 
-// Testing & Reward Logic
 let wallet = 0;
 let streakSeconds = 0;
 const MULTIPLIER_INTERVAL = 30; 
 let focusMultiplier = 1.0;
 const MAX_MULTIPLIER = 3.0;
 
-// Grace Period & Sensitivity Logic
 let awayTimer = 0; 
-const GRACE_PERIOD = 10; // Back to 10 seconds
+const GRACE_PERIOD = 10; 
 let lastValidX = 0;
 let lastValidY = 0;
 
@@ -41,14 +39,18 @@ async function startCalibration() {
         if (!data) {
             isAway = true;
         } else {
-            // Boundary + Jump Detection logic
-            const padding = 80;
-            const offScreen = data.x < padding || data.x > (window.innerWidth - padding) || 
-                              data.y < padding || data.y > (window.innerHeight - padding);
+            const sidePadding = 80;
+            const bottomPadding = window.innerHeight * 0.3; // 30% threshold
 
+            const offScreen = data.x < sidePadding || 
+                              data.x > (window.innerWidth - sidePadding) || 
+                              data.y < sidePadding || 
+                              data.y > (window.innerHeight - bottomPadding);
+
+            const verticalDrop = data.y - lastValidY;
             const jumpDist = Math.sqrt(Math.pow(data.x - lastValidX, 2) + Math.pow(data.y - lastValidY, 2));
             
-            if (offScreen || (isCalibrated && jumpDist > 400)) {
+            if (offScreen || (isCalibrated && (jumpDist > 450 || verticalDrop > 200))) {
                 isAway = true;
             } else {
                 lastValidX = data.x;
@@ -80,9 +82,7 @@ async function startCalibration() {
 
 function tickRewardSystem() {
     if (!isCalibrated) return;
-
     const statusText = document.getElementById('status-text').innerText;
-    
     if (statusText === "AWAY") {
         awayTimer++;
         if (awayTimer >= GRACE_PERIOD) {
@@ -95,14 +95,11 @@ function tickRewardSystem() {
     } else {
         awayTimer = 0; 
     }
-
     streakSeconds++;
-    
     if (streakSeconds % MULTIPLIER_INTERVAL === 0 && focusMultiplier < MAX_MULTIPLIER) {
         focusMultiplier += 0.5;
         if (focusMultiplier > MAX_MULTIPLIER) focusMultiplier = MAX_MULTIPLIER;
     }
-
     wallet += (0.05 * focusMultiplier);
     updateUI();
 }
@@ -112,17 +109,13 @@ function updateUI() {
     const moneyFormatted = `$${wallet.toFixed(2)}`;
     const multFormatted = `${focusMultiplier.toFixed(1)}x`;
     const statusLabel = document.getElementById('status-text').innerText;
-
     document.getElementById('money-text').innerText = moneyFormatted;
     document.getElementById('multiplier-tag').innerText = multFormatted + " Focus Multiplier";
     document.getElementById('multiplier-tag').style.color = focusMultiplier >= MAX_MULTIPLIER ? "#fbbf24" : "#22c55e";
-
     let progress = ((streakSeconds % MULTIPLIER_INTERVAL) / MULTIPLIER_INTERVAL) * 100;
     if (focusMultiplier >= MAX_MULTIPLIER) progress = 100; 
     streakBar.style.width = progress + "%";
     streakBar.style.background = focusMultiplier >= MAX_MULTIPLIER ? "#fbbf24" : "#3b82f6";
-
-    // Tab Title Updates
     if (statusLabel === "AWAY") {
         const timeLeft = Math.max(0, GRACE_PERIOD - awayTimer);
         document.title = `⚠️ ${timeLeft}s LEFT!`;
@@ -146,15 +139,17 @@ document.querySelectorAll('.calib-point').forEach(el => {
             this.style.pointerEvents = "none";
             pointsLeft--;
         }
-        if (pointsLeft === 0) {
-            finalizeCalibration();
-        }
+        if (pointsLeft === 0) finalizeCalibration();
     };
 });
 
 function finalizeCalibration() {
     isCalibrated = true;
     webgazer.removeMouseEventListeners(); 
+    
+    // THIS LINE HIDES THE CAMERA PREVIEW
+    webgazer.showVideoPreview(false); 
+    
     document.getElementById('calibration-group').style.display = 'none';
     document.getElementById('status-container').style.display = 'block';
     document.getElementById('reward-ui').style.display = 'block';

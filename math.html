@@ -59,43 +59,29 @@
     </style>
 </head>
 <body>
-
     <div id="gaze-dot"></div>
-
     <div id="overlay">
         <h2 style="margin-bottom: 10px;">Presence Tracker</h2>
         <p style="color: #94a3b8; margin-bottom: 20px;">Click each red dot 10 times while looking at it directly.</p>
         <button onclick="startCalibration()">Start Training</button>
     </div>
-
     <div id="calibration-group" style="display:none">
-        <div class="calib-point pt1" data-clicks="0">10</div>
-        <div class="calib-point pt2" data-clicks="0">10</div>
-        <div class="calib-point pt3" data-clicks="0">10</div>
-        <div class="calib-point pt4" data-clicks="0">10</div>
-        <div class="calib-point pt5" data-clicks="0">10</div>
-        <div class="calib-point pt6" data-clicks="0">10</div>
-        <div class="calib-point pt7" data-clicks="0">10</div>
-        <div class="calib-point pt8" data-clicks="0">10</div>
-        <div class="calib-point pt9" data-clicks="0">10</div>
+        <div class="calib-point pt1" data-clicks="0">10</div><div class="calib-point pt2" data-clicks="0">10</div><div class="calib-point pt3" data-clicks="0">10</div>
+        <div class="calib-point pt4" data-clicks="0">10</div><div class="calib-point pt5" data-clicks="0">10</div><div class="calib-point pt6" data-clicks="0">10</div>
+        <div class="calib-point pt7" data-clicks="0">10</div><div class="calib-point pt8" data-clicks="0">10</div><div class="calib-point pt9" data-clicks="0">10</div>
     </div>
-
     <div id="status-container">
         <div id="status-box">
             <div class="label">System Status</div>
             <div id="status-text">CALIBRATING</div>
-            
             <div id="reward-ui">
                 <div class="label">Wallet</div>
                 <div id="money-text">$0.00</div>
                 <div id="multiplier-tag">1.0x Multiplier</div>
-                <div id="streak-container">
-                    <div id="streak-bar"></div>
-                </div>
+                <div id="streak-container"><div id="streak-bar"></div></div>
             </div>
         </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/webgazer@2.1.1/dist/webgazer.js"></script>
     <script src="script.js"></script>
 </body>
