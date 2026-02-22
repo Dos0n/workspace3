@@ -10,8 +10,38 @@ const k = kaplay({
 
 // --- Load Assets ---
 loadSprite("bed", "/assets/sprites/bed.png");
-loadSprite("gdog", "/assets/sprites/gdog.png");
+loadFont("font","/assets/fonts/menufont.ttf")
 loadSprite("shop","/assets/icons/shop.png")
+loadSprite("glasses", "/assets/icons/glasses.png");
+loadSprite("heart", "/assets/icons/heart.png");
+loadSprite("money", "/assets/icons/money.png");
+loadSprite("shelves", "/assets/icons/shelves.png");
+loadSprite("shop", "/assets/icons/shop.png"); 
+loadSprite("star", "/assets/icons/star.png");
+loadSprite("toast", "/assets/icons/toast.png");
+//PETS
+loadSprite("bed", "/assets/sprites/bed.png");
+loadSprite("beigedog", "/assets/sprites/beigedog.png");
+loadSprite("cat", "/assets/sprites/cat.png");
+loadSprite("crybeigedog", "/assets/sprites/crybeigedog.png");
+loadSprite("crycat", "/assets/sprites/crycat.png");
+loadSprite("gdog", "/assets/sprites/gdog.png");
+loadSprite("glassesgraydog", "/assets/sprites/glassesgraydog.png");
+loadSprite("hamster", "/assets/sprites/hamster.png");
+loadSprite("heartbeigedog", "/assets/sprites/heartbeigedog.png");
+loadSprite("heartcat", "/assets/sprites/heartcat.png");
+loadSprite("heartgraydog", "/assets/sprites/heartgraydog.png");
+loadSprite("sadgraydog", "/assets/sprites/sadgraydog.png");
+loadSprite("starbeigedog", "/assets/sprites/starbeigedog.png");
+loadSprite("starcat", "/assets/sprites/starcat.png");
+loadSprite("stargraydog", "/assets/sprites/stargraydog.png");
+loadSprite("toastbeigedog", "/assets/sprites/toastbeigedog.png");
+loadSprite("toastcat", "/assets/sprites/toastcat.png");
+loadSprite("toastgraydog", "/assets/sprites/toastgraydog.png");
+
+
+
+
 // --- Global Tracking State ---
 const state = {
     posX: 0,              // Smoothed Screen X (Pixels)
@@ -25,10 +55,10 @@ const state = {
     lookAwayStartTime: null,
     isUserLookingAway: false,
     money: 0,           
-    earnRate: 1,
+    earnRate: 1
 };
 const LOOK_AWAY_BUFFER = 2000;
-
+let paused = 0
 const FACE_LOSS_THRESHOLD = 2000; // ms to wait before declaring user "gone"
 
 // --- Helper: Coordinate Mapping ---
@@ -158,13 +188,14 @@ scene("calibrate", () => {
 });
 
 scene("menu",()=>{
-  add([pos(width()/4,height()/4),
+  add([pos(width()/4.4,height()/4),
     text("PLACE HOLDER TITLE",{
       font:"font",
       size: width() / 25,
       letterSpacing: 15,
       allign: "center",
       transform: (idx, ch) => ({
+        color: rgb(0,0,0),
         pos: vec2(0, wave(-4, 4, time() * 4 + idx * 0.5)),
         scale: wave(1, 1.2, time() * 3 + idx),
         angle: wave(-9, 9, time() * 3 + idx),
@@ -209,11 +240,13 @@ scene("menu",()=>{
     // onClick() comes from area() component
     // it runs once when the object is clicked
     btn.onClick(f);
-
     return btn;
 }
 
 // Adds the buttons with the function we added
+addButton("Start", vec2(width()/2, height()/1.5), () => go("main")); //CHANGE BACK TO CALIBRATE LATER
+addButton("Start", vec2(width()/2, height()/1.5), () => go("main")); //CHANGE BACK TO CALIBRATE LATER
+addButton("Start", vec2(width()/2, height()/1.5), () => go("main")); //CHANGE BACK TO CALIBRATE LATER
 addButton("Start", vec2(width()/2, height()/1.5), () => go("main")); //CHANGE BACK TO CALIBRATE LATER
 })
 go("menu")
@@ -291,8 +324,15 @@ function addButton(
 }
 
 // Adds the buttons with the function we added
-addButton("Pause", vec2(width()/2, height()/1.1),vec2(240,80),() => {
-
+const pauseButton = addButton("Pause", vec2(width()/2, height()/1.1),vec2(240,80),() => {
+  if(paused == 0){
+    paused = 1;
+    pauseButton.color = rgb(210, 245, 128)
+  }
+  else{
+    paused = 0;
+    pauseButton.color = rgb(255, 161, 161)
+  }
 }); //THIS WILL PAUSE THE TRACKING
 // shop button
 
@@ -361,7 +401,7 @@ let wasLookingAway = false;
 // FIX: Use Kaplay's idiomatic game loop to poll the WebGazer state
 onUpdate(() => {
     // Trigger: User just looked away
-    if (state.isUserLookingAway && !wasLookingAway) {
+    if (!paused && state.isUserLookingAway && !wasLookingAway) {
         pet.opacity = 0.5; // <-- FIX: Use 'pet', not 'dog'
         debug.log("Where did you go?");
         console.log("AWAY");
@@ -375,7 +415,7 @@ onUpdate(() => {
         wasLookingAway = false;
     }
 
-    if (!state.isUserLookingAway) {
+    if (!state.isUserLookingAway && !paused) {
             
       // dt() is the fraction of a second since the last frame.
       // Multiplying by dt() ensures they earn exactly 'earnRate' per second.
