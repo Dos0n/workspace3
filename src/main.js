@@ -414,8 +414,9 @@ scene("shop",()=>{
         await wait(speed); // Wait before adding the next letter
     }
     function whenclick(){
-        retbut.onClick
+        retbut.onClick((retbut)=>go("main"));
     }
+    whenclick();
 }
 
 })
