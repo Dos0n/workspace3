@@ -292,15 +292,56 @@ addButton("Pause", vec2(width()/2, height()/1.1),vec2(240,80),() => {
 
 }); //THIS WILL PAUSE THE TRACKING
 
+// shop button
 
 addButton("",vec2(100,height()/2),vec2(150,150),()=>{}).add([
   sprite("shop"),
   scale(.2,.2),
   pos(-85,-85),
-  
+  onClick(() => go("shop"))
 ])
 
+async function typeWriter(message, speed = 0.05) {
+    // 1. Create an empty text object
+    const label = add([
+        text(""),
+        pos(center()),
+        anchor("center"),
+        color(255, 255, 255),
+    ]);
 
+    // 2. Loop through each character
+    for (let i = 0; i < message.length; i++) {
+        label.text += message[i];
+        
+        // Play a "blip" sound here if you have one!
+        // play("blip", { detune: rand(-100, 100) });
+
+        await wait(speed); // Wait 0.05 seconds before the next letter
+    }
+}
+
+
+onResize(() => {
+    shopButton.pos = vec2(width() - 5, 5);
+});
+scene("shop",()=>{
+  textbox = add([
+    rect(width()-90, (height() / 2)-100, {radius: 20}), // Shape: Full width, half height
+    pos(45, (height() / 2)+68),        // Position: Starts halfway down
+    color(255, 100, 100),
+    outline(5,BLACK)
+  ])
+})
+function showtext(text){
+  textbox.add([
+    anchor("center"),
+    text(text, {
+        size: 26,
+    }),
+    color(BLACK), 
+]);
+}
 
 
 
