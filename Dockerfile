@@ -10,7 +10,6 @@ COPY package*.json ./
 #Install app dependencies
 RUN npm install
 RUN npm install kaplay
-RUN npm create vite@latest
 
 # Copy the rest of the app into the container
 COPY . . 

@@ -175,7 +175,9 @@ scene("menu",()=>{
     txt = "start game",
     p = vec2(200, 100),
     f = () => debug.log("hello"),
-) {
+
+)  
+ {
     // add a parent background object
     const btn = add([
         rect(240, 80, { radius: 8 }),
@@ -321,9 +323,6 @@ async function typeWriter(message, speed = 0.05) {
         await wait(speed); // Wait 0.05 seconds before the next letter
     }
 }
-
-
-
 scene("shop",()=>{
   const textbox = add([
     rect(width()-90, (height() / 2)-100, {radius: 20}), // Shape: Full width, half height
@@ -331,7 +330,13 @@ scene("shop",()=>{
     color(255, 100, 100),
     outline(5,BLACK)
   ])
+  //addButton("return",vec2(100,height()/2),vec2(100,100),()=>{go("main")})
+  const retbut = add([
+    rect(48, 16, { radius: 8 }),
+    pos(vec2(100,height()/2),vec2(150,150)),
+  ])
 })
+
 function showtext(text){
   textbox.add([
     anchor("center"),
