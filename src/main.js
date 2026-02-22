@@ -127,9 +127,13 @@ async function startWebGazer() {
   handleLookAway(isOffScreen);
   }).begin();
 
-  webgazer.showVideoPreview(false)
-          .showFaceFeedbackBox(false)
+  webgazer.showVideoPreview(true)
+          .showFaceFeedbackBox(true)
           .showPredictionPoints(false);
+  const videoContainer = document.getElementById("webgazerVideoContainer");
+    if (videoContainer) {
+        videoContainer.style.opacity = "1";
+    }
 }
 
 function handleLookAway(away) {
@@ -239,17 +243,17 @@ scene("menu",()=>{
 addButton("gdog", vec2(width()/5, height()/1.5),.5, () =>{//CHANGE BACK TO CALIBRATE LATER
   currentPet[0] = "gdog";
   currentPet[1] = "sadgraydog";
-  go("main")
+  go("calibrate")
 }); 
 addButton("beigedog", vec2(width()/2, height()/1.5),.5, () => {
   currentPet[0] = "beigedog";
   currentPet[1] = "crybeigedog";
-  go("main")
+  go("calibrate")
 }); //CHANGE BACK TO CALIBRATE LATER
 addButton("cat", vec2(width()/1.3, height()/1.5),.5, () => {
   currentPet[0] = "cat"
   currentPet[1] = "crycat"
-  go("main")
+  go("calibrate")
 }); //CHANGE BACK TO CALIBRATE LATER
 })
 go("menu")
@@ -275,7 +279,7 @@ scene("main",()=>{
   });
 
   // 3. Pet Sprite (Added last so it stays on top)
-  const pet = add([
+  let pet = add([
     sprite(currentPet[0]),
     scale(.5,.5),
     pos(center()),
@@ -375,7 +379,7 @@ scene("shop",()=>{
     width() / scenary.width,
     height() / scenary.height
   )
-  const pet = add([
+  let pet = add([
     sprite("hamster"),
     scale(.3,.3),
     pos(width()/2,(height()/2)-78),
@@ -420,21 +424,18 @@ let wasLookingAway = false;
 onUpdate(() => {
     // Trigger: User just looked away
     if (!paused && state.isUserLookingAway && !wasLookingAway) {
-        pet = currentPet[1]
+        pet.sprite = currentPet[1]
         wasLookingAway = true;
     } 
     // Trigger: User just returned
     else if (!state.isUserLookingAway && wasLookingAway) {
-        pet = currentPet[0]
+        pet.sprite = currentPet[0]
         wasLookingAway = false;
     }
-
     if (!state.isUserLookingAway && !paused) {
-            
       // dt() is the fraction of a second since the last frame.
       // Multiplying by dt() ensures they earn exactly 'earnRate' per second.
       state.money += state.earnRate * dt(); 
-
       // Update the text visually (Math.floor hides the messy decimals)
       moneyUI.text = `$${Math.floor(state.money)}`;
   }
