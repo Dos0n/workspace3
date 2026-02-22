@@ -345,25 +345,25 @@ addButton("",vec2(100,height()/2),vec2(150,150),()=>{go("shop")}).add([
   pos(-85,-85)
 ])
 
-async function typeWriter(message, speed = 0.05) {
-    // 1. Create an empty text object
+async function showtext(message, speed = 0.05, wid = width()/2, hei = (height() / 2)+200) {
+    // 1. Add the text object with an empty string
     const label = add([
         text(""),
-        pos(center()),
+        pos(wid, hei),
         anchor("center"),
         color(255, 255, 255),
     ]);
 
-    // 2. Loop through each character
+    // 2. Loop through each character of the message
     for (let i = 0; i < message.length; i++) {
-        label.text += message[i];
+        label.text += message[i]; // Add the next character
         
-        // Play a "blip" sound here if you have one!
-        // play("blip", { detune: rand(-100, 100) });
+        // Optional: Play a tiny "blip" sound here for effect
+        // play("tap-sound", { volume: 0.2, detune: rand(-100, 100) });
 
-        await wait(speed); // Wait 0.05 seconds before the next letter
-    }
-}
+        await wait(speed); // Wait before adding the next letter
+    } 
+  }
 //shoppe
 scene("shop",()=>{
   
@@ -396,29 +396,11 @@ scene("shop",()=>{
     color(255, 100, 100),
     outline(5,BLACK)
   ])
-  async function showtext(message, speed = 0.05) {
-    // 1. Add the text object with an empty string
-    const label = add([
-        text(""),
-        pos(width()/2, (height() / 2)+200),
-        anchor("center"),
-        color(255, 255, 255),
-    ]);
-
-    // 2. Loop through each character of the message
-    for (let i = 0; i < message.length; i++) {
-        label.text += message[i]; // Add the next character
-        
-        // Optional: Play a tiny "blip" sound here for effect
-        // play("tap-sound", { volume: 0.2, detune: rand(-100, 100) });
-
-        await wait(speed); // Wait before adding the next letter
-    }
-    function whenclick(){
+  
+  function whenclick(){
         retbut.onClick((retbut)=>go("main"));
     }
     whenclick();
-}
 
 })
 
