@@ -293,10 +293,11 @@ addButton("Pause", vec2(width()/2, height()/1.1),vec2(240,80),() => {
 }); //THIS WILL PAUSE THE TRACKING
 
 
-addButton("",vec2(0 + 50,height()/2),vec2(50,50),()=>{}).add([
+addButton("",vec2(100,height()/2),vec2(150,150),()=>{}).add([
   sprite("shop"),
-  pos(center()),
-  anchor("center")
+  scale(.2,.2),
+  pos(-85,-85),
+  
 ])
 
 
