@@ -38,10 +38,27 @@ loadSprite("stargraydog", "/assets/sprites/stargraydog.png");
 loadSprite("toastbeigedog", "/assets/sprites/toastbeigedog.png");
 loadSprite("toastcat", "/assets/sprites/toastcat.png");
 loadSprite("toastgraydog", "/assets/sprites/toastgraydog.png");
-
-
-
-
+loadSprite("beigedogglasses", "/assets/sprites/beigedogglasses.png");
+loadSprite("catglasses", "/assets/sprites/catglasses.png");
+let currentPet = ["",""]
+let gdogDict = {
+  "glassesgraydog" : 0,
+  "heartgraydog" : 0,
+  "toastgraydog" : 0,
+  "stargraydog":0
+}
+let beigedog = {
+  "beigedogglasses" : 0,
+  "heartbeigedog" : 0,
+  "toastbeigedog" : 0,
+  "starbeigedog": 0
+}
+let cat = {
+  "catglasses" : 0,
+  "heartcat" : 0,
+  "toastcat" : 0,
+  "starcat" : 0
+}
 // --- Global Tracking State ---
 const state = {
     posX: 0,              // Smoothed Screen X (Pixels)
@@ -202,54 +219,48 @@ scene("menu",()=>{
     })
     })
   ]);
+
   function addButton(
-    txt = "start game",
+    name = "gdog",
     p = vec2(200, 100),
+    s = 1,
     f = () => debug.log("hello"),
-
-)  
- {
-    // add a parent background object
+  ){
     const btn = add([
-        rect(240, 80, { radius: 8 }),
-        pos(p),
-        area(),
-        scale(1),
-        anchor("center"),
-        outline(4),
-        color(255, 255, 255),
-    ]);
-
-    // add a child object that displays the text
-    btn.add([
-        text(txt),
-        anchor("center"),
-        color(0, 0, 0),
-    ]);
-
-    // onHoverUpdate() comes from area() component
-    // it runs every frame when the object is being hovered
+      sprite(name),
+      pos(p.x,p.y),
+      scale(s),
+      anchor("center"),
+      area(),
+    ])
     btn.onHoverUpdate(() => {
         const t = time() * 10;
-        btn.scale = vec2(1.2);
+        btn.scale = vec2(s * 1.2);
         setCursor("pointer");
     });
-    // onHoverEnd() comes from area() component
-    // it runs once when the object stopped being hovered
     btn.onHoverEnd(() => {
-        btn.scale = vec2(1);
+        btn.scale = vec2(s);
     });
-    // onClick() comes from area() component
-    // it runs once when the object is clicked
     btn.onClick(f);
     return btn;
 }
 
 // Adds the buttons with the function we added
-addButton("Start", vec2(width()/2, height()/1.5), () => go("main")); //CHANGE BACK TO CALIBRATE LATER
-addButton("Start", vec2(width()/2, height()/1.5), () => go("main")); //CHANGE BACK TO CALIBRATE LATER
-addButton("Start", vec2(width()/2, height()/1.5), () => go("main")); //CHANGE BACK TO CALIBRATE LATER
-addButton("Start", vec2(width()/2, height()/1.5), () => go("main")); //CHANGE BACK TO CALIBRATE LATER
+addButton("gdog", vec2(width()/5, height()/1.5),.5, () =>{//CHANGE BACK TO CALIBRATE LATER
+  currentPet[0] = "gdog";
+  currentPet[1] = "sadgraydog";
+  go("main")
+}); 
+addButton("beigedog", vec2(width()/2, height()/1.5),.5, () => {
+  currentPet[0] = "beigedog";
+  currentPet[1] = "crybeigedog";
+  go("main")
+}); //CHANGE BACK TO CALIBRATE LATER
+addButton("cat", vec2(width()/1.3, height()/1.5),.5, () => {
+  currentPet[0] = "cat"
+  currentPet[1] = "crycat"
+  go("main")
+}); //CHANGE BACK TO CALIBRATE LATER
 })
 go("menu")
 
@@ -275,7 +286,7 @@ scene("main",()=>{
 
   // 3. Pet Sprite (Added last so it stays on top)
   const pet = add([
-    sprite("gdog"),
+    sprite(currentPet[0]),
     scale(.5,.5),
     pos(center()),
     anchor("center"),
