@@ -76,70 +76,60 @@ const state = {
 };
 const LOOK_AWAY_BUFFER = 2000;
 let paused = 0
-const FACE_LOSS_THRESHOLD = 2000; // ms to wait before declaring user "gone"
+const FACE_LOSS_THRESHOLD = 2000; // ms to wait before declaring user gone
 
-// --- Helper: Coordinate Mapping ---
-// Converts raw browser pixels to KAPLAY scene coordinates
 function screenToGamePos(screenX, screenY) {
     const canvas = k.canvas;
     const rect = canvas.getBoundingClientRect();
 
-    // 1. Position relative to canvas element
     let x = screenX - rect.left;
     let y = screenY - rect.top;
 
-    // 2. Scale based on internal resolution vs CSS size
     x *= k.width() / rect.width;
     y *= k.height() / rect.height;
 
     return k.vec2(x, y);
 }
 
-// --- WebGazer Logic ---
+
 async function startWebGazer() {
-    await webgazer.setGazeListener((data) => {
-        const now = Date.now();
+  await webgazer.setGazeListener((data) => {
+    const now = Date.now();
 
-        // 1. Handle Lost Face (Null Data)
-        if (!data) {
-            if (now - state.lastDataTime > FACE_LOSS_THRESHOLD) {
-                handleLookAway(true);
-            }
-            return;
+    if (!data) {
+        if (now - state.lastDataTime > FACE_LOSS_THRESHOLD) {
+            handleLookAway(true);
         }
+        return;
+    }
 
-        // We have data, reset the heartbeat
-        state.lastDataTime = now;
+    state.lastDataTime = now;
 
-        // 2. Exponential Moving Average Smoothing
-        state.posX = (state.posX * (1 - state.ALPHA)) + (data.x * state.ALPHA);
-        state.posY = (state.posY * (1 - state.ALPHA)) + (data.y * state.ALPHA);
+    state.posX = (state.posX * (1 - state.ALPHA)) + (data.x * state.ALPHA);
+    state.posY = (state.posY * (1 - state.ALPHA)) + (data.y * state.ALPHA);
 
-        // 3. Map to Game World
-        const gamePos = screenToGamePos(state.posX, state.posY);
-        state.gameX = gamePos.x;
-        state.gameY = gamePos.y;
-        // 4. Update the visual dot (DOM side)
-        const dot = document.getElementById("gaze-dot");
-        if (dot) {
-            dot.style.transform = `translate3d(${state.posX}px, ${state.posY}px, 0)`;
-            dot.style.opacity = "1";
-        }
+    const gamePos = screenToGamePos(state.posX, state.posY);
+    state.gameX = gamePos.x;
+    state.gameY = gamePos.y;
 
-        // 5. Detection Logic (Check if gaze is out of game bounds)
-        const isOffScreen = 
-        data.x < state.PADDING || 
-        data.x > (window.innerWidth - state.PADDING) ||
-        data.y < state.PADDING || 
-        data.y > (window.innerHeight - state.PADDING);
-    
-    handleLookAway(isOffScreen);
-    }).begin();
+    const dot = document.getElementById("gaze-dot");
+    if (dot) {
+        dot.style.transform = `translate3d(${state.posX}px, ${state.posY}px, 0)`;
+        dot.style.opacity = "1";
+    }
 
-    // Standard Setup
-    webgazer.showVideoPreview(false)
-            .showFaceFeedbackBox(false)
-            .showPredictionPoints(false);
+    const isOffScreen = 
+    data.x < state.PADDING || 
+    data.x > (window.innerWidth - state.PADDING) ||
+    data.y < state.PADDING || 
+    data.y > (window.innerHeight - state.PADDING);
+
+  handleLookAway(isOffScreen);
+  }).begin();
+
+  webgazer.showVideoPreview(false)
+          .showFaceFeedbackBox(false)
+          .showPredictionPoints(false);
 }
 
 function handleLookAway(away) {
@@ -406,12 +396,6 @@ const moneyUI = add([
   z(100),  // Forces it to draw on top of everything else
 ]);
 
-
-
-
-
-
-
 // Local state to track transitions and prevent spamming debug logs
 let wasLookingAway = false;
 
@@ -419,16 +403,12 @@ let wasLookingAway = false;
 onUpdate(() => {
     // Trigger: User just looked away
     if (!paused && state.isUserLookingAway && !wasLookingAway) {
-        pet.opacity = 0.5; // <-- FIX: Use 'pet', not 'dog'
-        debug.log("Where did you go?");
-        console.log("AWAY");
+        pet = currentPet[1]
         wasLookingAway = true;
     } 
     // Trigger: User just returned
     else if (!state.isUserLookingAway && wasLookingAway) {
-        pet.opacity = 1;
-        debug.log("Welcome back!");
-        console.log("RETURNED");
+        pet = currentPet[0]
         wasLookingAway = false;
     }
 
