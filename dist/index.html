@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaze Tracker - Calibration</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/webgazer@2.1.1/dist/webgazer.js"></script>
+    
+    <style>
+        body { margin: 0; padding: 0; background: #0f172a; overflow: hidden; }
+
+        /* The Eye Tracking Dot */
+        #gaze-dot {
+            width: 12px; height: 12px; background: #22c55e; border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 9999;
+            box-shadow: 0 0 15px #22c55e; opacity: 0;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Calibration UI Wrapper (Controlled by Kaplay) */
+        #calib-overlay {
+            position: fixed; inset: 0; display: none; z-index: 1000;
+            background: rgba(15, 23, 42, 0.059);
+            flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        /* Red Calibration Points */
+        .calib-point {
+            width: 34px; height: 34px; background: #ef4444; border-radius: 50%;
+            position: absolute; cursor: pointer; border: 2px solid white;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 11px; color: white; user-select: none;
+        }
+
+        /* Grid layout for points */
+        .pt1 { top: 10%; left: 10%; } .pt2 { top: 10%; left: 50%; } .pt3 { top: 10%; left: 90%; }
+        .pt4 { top: 50%; left: 10%; } .pt5 { top: 50%; left: 50%; } .pt6 { top: 50%; left: 90%; }
+        .pt7 { top: 90%; left: 10%; } .pt8 { top: 90%; left: 50%; } .pt9 { top: 90%; left: 90%; }
+
+        button {
+            padding: 12px 30px; border: none; border-radius: 8px; background: #3b82f6;
+            color: white; font-weight: bold; cursor: pointer; font-family: sans-serif;
+        }
+        
+    </style>
+  <script type="module" crossorigin src="/assets/index-Qw8lpgHK.js"></script>
+</head>
+<body>
+
+    <div id="gaze-dot"></div>
+
+    <div id="calib-overlay">
+        <div id="start-btn-container" style="text-align: center;">
+            <h2 style="color: white; font-family: sans-serif;">Eye Calibration</h2>
+            <button id="begin-btn">Begin Training</button>
+        </div>
+
+        <div id="points-group" style="display: none;">
+            <div class="calib-point pt1" data-clicks="0">10</div>
+            <div class="calib-point pt2" data-clicks="0">10</div>
+            <div class="calib-point pt3" data-clicks="0">10</div>
+            <div class="calib-point pt4" data-clicks="0">10</div>
+            <div class="calib-point pt5" data-clicks="0">10</div>
+            <div class="calib-point pt6" data-clicks="0">10</div>
+            <div class="calib-point pt7" data-clicks="0">10</div>
+            <div class="calib-point pt8" data-clicks="0">10</div>
+            <div class="calib-point pt9" data-clicks="0">10</div>
+        </div>
+    </div>
+
+
+</body>
+</html>
