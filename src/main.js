@@ -217,7 +217,7 @@ scene("calibrate", () => {
 
 scene("menu",()=>{
   add([pos(width()/10.4,height()/4),
-    text("FUZZY WUZZY STUDY BUDDYS",{
+    text("FUZZY WUZZY STUDY BUDDIES",{
       font:"font",
       size: width() / 25,
       letterSpacing: 15,
