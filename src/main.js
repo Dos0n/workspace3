@@ -23,6 +23,9 @@ const state = {
     PADDING: 0,          // Boundary buffer
     lastDataTime: Date.now(),
     lookAwayStartTime: null,
+    isUserLookingAway: false,
+    money: 0,           
+    earnRate: 1,
 };
 const LOOK_AWAY_BUFFER = 2000;
 
@@ -300,7 +303,13 @@ addButton("",vec2(100,height()/2),vec2(150,150),()=>{}).add([
   
 ])
 
-
+const moneyUI = add([
+  text(`$${Math.floor(state.money)}`, { size: 48 }),
+  pos(24, 24),
+  color(0, 0, 0),
+  fixed(), // Keeps the UI anchored to the screen if you add a camera later
+  z(100),  // Forces it to draw on top of everything else
+]);
 
 
 
@@ -327,6 +336,16 @@ onUpdate(() => {
         console.log("RETURNED");
         wasLookingAway = false;
     }
+
+    if (!state.isUserLookingAway) {
+            
+      // dt() is the fraction of a second since the last frame.
+      // Multiplying by dt() ensures they earn exactly 'earnRate' per second.
+      state.money += state.earnRate * dt(); 
+
+      // Update the text visually (Math.floor hides the messy decimals)
+      moneyUI.text = `$${Math.floor(state.money)}`;
+  }
 });
   function updateSizes() {
     // Update white background
