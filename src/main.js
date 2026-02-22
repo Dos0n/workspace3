@@ -364,18 +364,35 @@ async function typeWriter(message, speed = 0.05) {
     }
 }
 scene("shop",()=>{
+  
+  const wall = add([
+    sprite("bed"),
+  ]);
+  //addButton("return",vec2(100,height()/2),vec2(100,100),()=>{go("main")})
+  wall.scale = vec2(
+    width() / scenary.width,
+    height() / scenary.height
+  )
+  const pet = add([
+    sprite("hamster"),
+    scale(.3,.3),
+    pos(width()/2,(height()/2)-78),
+    anchor("center"),
+    opacity(1), // <-- FIX: Add the opacity component
+  ])
   const textbox = add([
     rect(width()-90, (height() / 2)-100, {radius: 20}), // Shape: Full width, half height
     pos(45, (height() / 2)+68),        // Position: Starts halfway down
     color(255, 100, 100),
     outline(5,BLACK)
   ])
-  //addButton("return",vec2(100,height()/2),vec2(100,100),()=>{go("main")})
+  
   const retbut = add([
     rect(48, 16, { radius: 8 }),
     pos(vec2(100,height()/2),vec2(150,150)),
     area()
   ])
+
 })
 
 function showtext(text){
