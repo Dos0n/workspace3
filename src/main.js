@@ -160,7 +160,7 @@ scene("calibrate", () => {
     const points = document.querySelectorAll(".calib-point");
     
     let pointsLeft = points.length;
-    const CLICKS_PER_POINT = 1;
+    const CLICKS_PER_POINT = 10;
 
     overlay.style.display = "flex";
 
@@ -349,41 +349,46 @@ addButton("",vec2(100,height()/2),vec2(150,150),()=>{go("shop")}).add([
   pos(-85,-85)
 ])
 
-// Add a variable outside the function to keep track of the current text
-let currentMessageLabel = null;
-
-let typingAction = null; // Variable to track the current typing progress
-
-// 1. Define this OUTSIDE the function so it persists between calls
+// Keep track of the current "active" message version
+let messageCounter = 0;
 let activeLabel = null;
 
-async function showtext(message, speed = 0.05, wid = width()/2, hei = (height() / 2) + 180) {
-    // 2. If there is already a label, destroy it immediately to stop overlaps
-    if (activeLabel) {
-        destroy(activeLabel);
-    }
+async function showtext(message, speed = 0.05) {
+    // 1. Increment the counter so old loops know to stop
+    messageCounter++;
+    const myId = messageCounter;
 
-    // 3. Create the NEW label
-    activeLabel = add([
-        text("", { 
-            size: 24, 
-            width: width() - 150, // This prevents jumbling by forcing word wrap
-            align: "center" 
-        }),
-        pos(wid, hei),
-        anchor("center"),
-        color(255, 255, 255),
-        z(10), // Keep it above the red box
-    ]);
+    // 2. Clean up the previous label if it exists
+    if (activeLabel) {
+        destroy(activeLabel);
+        activeLabel = null;
+    }
 
-    // 4. Typing Loop
-    for (let i = 0; i < message.length; i++) {
-        // Safety: If the label was destroyed (e.g., by another click), stop the loop
-        if (!activeLabel.exists()) return;
-        
-        activeLabel.text += message[i];
-        await wait(speed);
-    } 
+    // 3. Create the new label
+    activeLabel = add([
+        text("", { 
+            size: 24, 
+            width: width() - 150, 
+            align: "center" 
+        }),
+        pos(width() / 2, (height() / 2) + 180),
+        anchor("center"),
+        color(255, 255, 255),
+        z(10),
+    ]);
+
+    // 4. Typing Loop
+    for (let i = 0; i < message.length; i++) {
+        // CHECK: If a newer call has started (myId is no longer current),
+        // stop this specific loop immediately.
+        if (myId !== messageCounter) return;
+        
+        // CHECK: Safety check to ensure the label still exists
+        if (!activeLabel.exists()) return;
+
+        activeLabel.text += message[i];
+        await wait(speed);
+    }
 }
 
 //shoppe
@@ -472,7 +477,39 @@ scene("shop",()=>{
     pos(50,50),
     color(0,0,0)
   ])
-  
+  // --- Hover logic for Shop Items ---
+
+// Example for the Heart
+heart.onHover(() => {
+    showtext("Heart: Costs $500. Increases pet happiness!", 0.02);
+});
+heart.onHoverEnd(() => {
+    showtext("Select an item to purchase.",100);
+});
+
+// Example for the Glasses
+glasses.onHover(() => {
+    showtext("Glasses: Costs $300. Look stylish!", 0.02);
+});
+glasses.onHoverEnd(() => {
+    showtext("Select an item to purchase.",100);
+});
+
+// Example for the Star
+star.onHover(() => {
+    showtext("Star: Costs $700. Pure magic!", 0.02);
+});
+star.onHoverEnd(() => {
+    showtext("Select an item to purchase.",100);
+});
+
+// Example for the Toast
+toast.onHover(() => {
+    showtext("Toast: Costs $1. A crunchy snack.", 0.02);
+});
+toast.onHoverEnd(() => {
+    showtext("Select an item to purchase.",100);
+});
  function whenclick(sprite) {
 
     retbut.onClick(() => go("main"));
@@ -584,23 +621,24 @@ let wasLookingAway = false;
 
 // FIX: Use Kaplay's idiomatic game loop to poll the WebGazer state
 onUpdate(() => {
-    // Trigger: User just looked away
-    if (!paused && state.isUserLookingAway && !wasLookingAway) {
-        pet.sprite = currentPet[1]
-        wasLookingAway = true;
-    } 
-    // Trigger: User just returned
-    else if (!state.isUserLookingAway && wasLookingAway) {
-        pet.sprite = currentPet[0]
-        wasLookingAway = false;
-    }
-    if (!state.isUserLookingAway && !paused) {
-      // dt() is the fraction of a second since the last frame.
-      // Multiplying by dt() ensures they earn exactly 'earnRate' per second.
-      state.money += state.earnRate * dt(); 
-      // Update the text visually (Math.floor hides the messy decimals)
-      moneyUI.text = `$${Math.floor(state.money)}`;
-  }
+    // Trigger: User just looked away
+    if (!paused && state.isUserLookingAway && !wasLookingAway) {
+        pet.use(sprite(currentPet[1])); // <-- FIX: Use .use(sprite())
+        wasLookingAway = true;
+    } 
+    // Trigger: User just returned
+    else if (!state.isUserLookingAway && wasLookingAway) {
+        pet.use(sprite(currentPet[0])); // <-- FIX: Use .use(sprite())
+        wasLookingAway = false;
+    }
+    
+    if (!state.isUserLookingAway && !paused) {
+      // dt() is the fraction of a second since the last frame.
+      // Multiplying by dt() ensures they earn exactly 'earnRate' per second.
+      state.money += state.earnRate * dt(); 
+      // Update the text visually (Math.floor hides the messy decimals)
+      moneyUI.text = `$${Math.floor(state.money)}`;
+  }
 });
   function updateSizes() {
     // Update white background
