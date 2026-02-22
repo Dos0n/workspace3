@@ -537,16 +537,19 @@ toast.onHoverEnd(() => {
             console.log("can afford")
             if (["graydog", "heartgraydog", "stargraydog", "glassesgraydog", "toastgraydog", "sadgraydog"].includes(currentPet[0])) {
                 currentPet[0] = "heartgraydog";
+                pet.sprite = currentPet[0]
                 state.money -= 500;
                 go("main");
             } 
             else if (["beigedog", "starbeigedog", "toastbeigedog", "beigedogglasses", "heartbeigedog", "crybeigedog"].includes(currentPet[0])) {
                 currentPet[0] = "heartbeigedog";
+                pet.sprite = currentPet[0]
                 state.money -= 500;
                 go("main");
             } 
             else if (["cat", "heartcat", "starcat", "toastcat", "catglasses", "crycat"].includes(currentPet[0])) {
                 currentPet[0] = "heartcat";
+                pet.sprite = currentPet[0]
                 state.money -= 500;
                 go("main");
             }
@@ -561,16 +564,19 @@ toast.onHoverEnd(() => {
             console.log("can afford")
             if (["graydog", "heartgraydog", "stargraydog", "glassesgraydog", "toastgraydog", "sadgraydog"].includes(currentPet[0])) {
                 currentPet[0] = "glassesgraydog";
+                pet.sprite = currentPet[0]
                 state.money -= 300;
                 go("main");
             } 
             else if (["beigedog", "starbeigedog", "heartbeigedog", "toastbeigedog", "beigedogglasses", "crybeigedog"].includes(currentPet[0])) {
                 currentPet[0] = "beigedogglasses";
+                pet.sprite = currentPet[0]
                 state.money -= 300;
                 go("main");
             } 
             else if (["cat", "heartcat", "starcat", "catglasses", "toastcat", "crycat"].includes(currentPet[0])) {
                 currentPet[0] = "catglasses";
+                pet.sprite = currentPet[0]
                 state.money -= 300;
                 go("main");
             }
@@ -585,16 +591,19 @@ toast.onHoverEnd(() => {
             console.log("can afford")
             if (["graydog", "heartgraydog", "stargraydog", "glassesgraydog", "toastgraydog", "sadgraydog"].includes(currentPet[0])) {
                 currentPet[0] = "toastgraydog";
+                pet.sprite = currentPet[0]
                 state.money -= 1;
                 go("main");
             } 
             else if (["beigedog", "starbeigedog", "heartbeigedog", "beigedogglasses", "toastbeigedog", "crybeigedog"].includes(currentPet[0])) {
                 currentPet[0] = "toastbeigedog";
+                pet.sprite = currentPet[0]
                 state.money -= 1;
                 go("main");
             } 
             else if (["cat", "heartcat", "starcat", "catglasses", "toastcat", "crycat"].includes(currentPet[0])) {
                 currentPet[0] = "toastcat";
+                pet.sprite = currentPet[0]
                 state.money -= 1;
                 go("main");
             }
@@ -607,16 +616,19 @@ toast.onHoverEnd(() => {
         if (state.money > 700) {
             if (["graydog", "heartgraydog", "stargraydog", "glassesgraydog", "toastgraydog", "sadgraydog"].includes(currentPet[0])) {
                 currentPet[0] = "stargraydog";
+                pet.sprite = currentPet[0]
                 state.money -= 700;
                 go("main");
             } 
             else if (["beigedog", "heartbeigedog", "toastbeigedog", "beigedogglasses", "starbeigedog", "crybeigedog"].includes(currentPet[0])) {
                 currentPet[0] = "starbeigedog";
+                pet.sprite = currentPet[0]
                 state.money -= 700;
                 go("main");
             } 
             else if (["cat", "heartcat", "starcat", "catglasses", "toastcat", "crycat"].includes(currentPet[0])) {
                 currentPet[0] = "starcat";
+                pet.sprite = currentPet[0]
                 state.money -= 700;
                 go("main");
             }
@@ -644,13 +656,14 @@ let wasLookingAway = false;
 // FIX: Use Kaplay's idiomatic game loop to poll the WebGazer state
 onUpdate(() => {
     // Trigger: User just looked away
-    pet.use(sprite(currentPet[0]));
     if (!paused && state.isUserLookingAway && !wasLookingAway) {
+        console.log("AWAY")
         pet.use(sprite(currentPet[1])); // <-- FIX: Use .use(sprite())
         wasLookingAway = true;
     } 
     // Trigger: User just returned
     else if (!state.isUserLookingAway && wasLookingAway) {
+        console.log("RETURN")
         pet.use(sprite(currentPet[0])); // <-- FIX: Use .use(sprite())
         wasLookingAway = false;
     }
