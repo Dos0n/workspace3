@@ -16,6 +16,56 @@ scene("calibrate",()=>{
 
   
 })
+async function typeWriter(message, speed = 0.05) {
+    // 1. Create an empty text object
+    const label = add([
+        text(""),
+        pos(center()),
+        anchor("center"),
+        color(255, 255, 255),
+    ]);
+
+    // 2. Loop through each character
+    for (let i = 0; i < message.length; i++) {
+        label.text += message[i];
+        
+        // Play a "blip" sound here if you have one!
+        // play("blip", { detune: rand(-100, 100) });
+
+        await wait(speed); // Wait 0.05 seconds before the next letter
+    }
+}
+// shop button
+const shopButton = add([
+    anchor("topright"),
+    sprite("Shopping Button"),
+    area(),
+    pos(width() - 5, 5), // Just subtract padding from the screen edge
+    color(0, 255, 0),
+]);
+
+onResize(() => {
+    shopButton.pos = vec2(width() - 5, 5);
+});
+shopButton.onClick(() => go("shop"))
+scene("shop",()=>{
+  add([
+    rect(width()-90, (height() / 2)-100, {radius: 20}), // Shape: Full width, half height
+    pos(45, (height() / 2)+68),        // Position: Starts halfway down
+    color(255, 100, 100),
+    outline(5,BLACK)
+  ])
+})
+function showtext(text){
+  shopButton.add([
+    anchor("center"),
+    text(text, {
+        size: 26,
+    }),
+    color(BLACK), 
+]);
+}
+
 
 scene("menu",()=>{
   add([pos(width()/4,height()/4),
@@ -74,7 +124,7 @@ scene("menu",()=>{
 }
 
 // Adds the buttons with the function we added
-addButton("Start", vec2(width()/2, height()/1.5), () => go("calibrate"));
+addButton("Start", vec2(width()/2, height()/1.5), () => go("shop"));
 })
 go("menu")
 
