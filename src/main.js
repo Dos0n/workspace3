@@ -160,7 +160,7 @@ scene("calibrate", () => {
     const points = document.querySelectorAll(".calib-point");
     
     let pointsLeft = points.length;
-    const CLICKS_PER_POINT = 10;
+    const CLICKS_PER_POINT = 1;
 
     overlay.style.display = "flex";
 
@@ -379,12 +379,25 @@ scene("shop",()=>{
     width() / scenary.width,
     height() / scenary.height
   )
+  const shopwall = add([
+    rect(width()*2,height()*2),
+    opacity(0.5),
+    anchor("center"),
+    color(rgb(255, 213, 85))
+  ])
   let pet = add([
     sprite("hamster"),
     scale(.3,.3),
     pos(width()/2,(height()/2)-78),
     anchor("center"),
     opacity(1), // <-- FIX: Add the opacity component
+  ])
+  let heart = add ([
+    sprite("hamster"),
+    scale(.3,.3),
+    pos(width()-100,(height()/2)-78),
+    anchor("center"),
+    opacity(1),
   ])
   const textbox = add([
     rect(width()-90, (height() / 2)-100, {radius: 20}), // Shape: Full width, half height
