@@ -11,12 +11,7 @@ const background = add([
     color(255, 255, 255),
 ]);
 
-// shop button
-const shopButton = add([
-    sprite("shop"),
-    area(),
-    onclick(() => go("shop"))
-]);
+
 
 // 2. Scenary Sprite
 const scenary = add([

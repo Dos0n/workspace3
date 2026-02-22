@@ -295,21 +295,16 @@ addButton("Pause", vec2(width()/2, height()/1.1),vec2(240,80),() => {
 
 }); //THIS WILL PAUSE THE TRACKING
 
+// shop button
 
 addButton("",vec2(100,height()/2),vec2(150,150),()=>{}).add([
   sprite("shop"),
   scale(.2,.2),
   pos(-85,-85),
-  
+  onClick(() => go("shop"))
 ])
 
-const moneyUI = add([
-  text(`$${Math.floor(state.money)}`, { size: 48 }),
-  pos(24, 24),
-  color(0, 0, 0),
-  fixed(), // Keeps the UI anchored to the screen if you add a camera later
-  z(100),  // Forces it to draw on top of everything else
-]);
+
 
 
 
