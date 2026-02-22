@@ -85,7 +85,7 @@ const state = {
     lastDataTime: Date.now(),
     lookAwayStartTime: null,
     isUserLookingAway: false,
-    money: 1000,           
+    money: 0,           
     earnRate: 10
 };
 const LOOK_AWAY_BUFFER = 2000;
