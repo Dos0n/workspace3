@@ -334,6 +334,7 @@ scene("shop",()=>{
   const retbut = add([
     rect(48, 16, { radius: 8 }),
     pos(vec2(100,height()/2),vec2(150,150)),
+    area()
   ])
 })
 
