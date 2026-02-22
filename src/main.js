@@ -363,6 +363,7 @@ async function typeWriter(message, speed = 0.05) {
         await wait(speed); // Wait 0.05 seconds before the next letter
     }
 }
+//shoppe
 scene("shop",()=>{
   
   const wall = add([
@@ -386,24 +387,40 @@ scene("shop",()=>{
     color(255, 100, 100),
     outline(5,BLACK)
   ])
-  
+  showtext("Hello, I'm the shopkeeper, welcome to the shop");
   const retbut = add([
-    rect(48, 16, { radius: 8 }),
-    pos(vec2(100,height()/2),vec2(150,150)),
-    area()
+    rect(100, 100, { radius: 8 }),
+    pos(20,height()/2),
+    area(),
+    color(255, 100, 100),
+    outline(5,BLACK)
   ])
+  async function showtext(message, speed = 0.05) {
+    // 1. Add the text object with an empty string
+    const label = add([
+        text(""),
+        pos(width()/2, (height() / 2)+200),
+        anchor("center"),
+        color(255, 255, 255),
+    ]);
+
+    // 2. Loop through each character of the message
+    for (let i = 0; i < message.length; i++) {
+        label.text += message[i]; // Add the next character
+        
+        // Optional: Play a tiny "blip" sound here for effect
+        // play("tap-sound", { volume: 0.2, detune: rand(-100, 100) });
+
+        await wait(speed); // Wait before adding the next letter
+    }
+    function whenclick(){
+        retbut.onClick
+    }
+}
 
 })
 
-function showtext(text){
-  textbox.add([
-    anchor("center"),
-    text(text, {
-        size: 26,
-    }),
-    color(BLACK), 
-]);
-}
+
 const moneyUI = add([
   text(`$${Math.floor(state.money)}`, { size: 48 }),
   pos(24, 24),
