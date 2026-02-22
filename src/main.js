@@ -1,21 +1,158 @@
 import kaplay from "kaplay";
 
+// --- KAPLAY Initialization ---
 const k = kaplay({
-  background: [212, 110, 179]
+    background: [255,240,219],
+    letterbox: true, // Crucial for maintaining aspect ratio
+    width: 1280,
+    height: 720,
 });
 
-//LOAD ALL ASSETS HERE
+// --- Load Assets ---
 loadSprite("bed", "/assets/sprites/bed.png");
 loadSprite("gdog", "/assets/sprites/gdog.png");
-loadFont("font", "/assets/fonts/menufont.ttf");
 
-console.log("starting")
+// --- Global Tracking State ---
+const state = {
+    posX: 0,              // Smoothed Screen X (Pixels)
+    posY: 0,              // Smoothed Screen Y (Pixels)
+    gameX: 0,             // Converted Game X (KAPLAY Units)
+    gameY: 0,             // Converted Game Y (KAPLAY Units)
+    isUserLookingAway: false,
+    ALPHA: 0.15,          // Smoothing factor (0.1 - 0.2 is usually best)
+    PADDING: 0,          // Boundary buffer
+    lastDataTime: Date.now(),
+    lookAwayStartTime: null,
+};
+const LOOK_AWAY_BUFFER = 2000;
 
-scene("calibrate",()=>{
+const FACE_LOSS_THRESHOLD = 2000; // ms to wait before declaring user "gone"
 
+// --- Helper: Coordinate Mapping ---
+// Converts raw browser pixels to KAPLAY scene coordinates
+function screenToGamePos(screenX, screenY) {
+    const canvas = k.canvas;
+    const rect = canvas.getBoundingClientRect();
 
-  
-})
+    // 1. Position relative to canvas element
+    let x = screenX - rect.left;
+    let y = screenY - rect.top;
+
+    // 2. Scale based on internal resolution vs CSS size
+    x *= k.width() / rect.width;
+    y *= k.height() / rect.height;
+
+    return k.vec2(x, y);
+}
+
+// --- WebGazer Logic ---
+async function startWebGazer() {
+    await webgazer.setGazeListener((data) => {
+        const now = Date.now();
+
+        // 1. Handle Lost Face (Null Data)
+        if (!data) {
+            if (now - state.lastDataTime > FACE_LOSS_THRESHOLD) {
+                handleLookAway(true);
+            }
+            return;
+        }
+
+        // We have data, reset the heartbeat
+        state.lastDataTime = now;
+
+        // 2. Exponential Moving Average Smoothing
+        state.posX = (state.posX * (1 - state.ALPHA)) + (data.x * state.ALPHA);
+        state.posY = (state.posY * (1 - state.ALPHA)) + (data.y * state.ALPHA);
+
+        // 3. Map to Game World
+        const gamePos = screenToGamePos(state.posX, state.posY);
+        state.gameX = gamePos.x;
+        state.gameY = gamePos.y;
+        // 4. Update the visual dot (DOM side)
+        const dot = document.getElementById("gaze-dot");
+        if (dot) {
+            dot.style.transform = `translate3d(${state.posX}px, ${state.posY}px, 0)`;
+            dot.style.opacity = "1";
+        }
+
+        // 5. Detection Logic (Check if gaze is out of game bounds)
+        const isOffScreen = 
+        data.x < state.PADDING || 
+        data.x > (window.innerWidth - state.PADDING) ||
+        data.y < state.PADDING || 
+        data.y > (window.innerHeight - state.PADDING);
+    
+    handleLookAway(isOffScreen);
+    }).begin();
+
+    // Standard Setup
+    webgazer.showVideoPreview(false)
+            .showFaceFeedbackBox(false)
+            .showPredictionPoints(false);
+}
+
+function handleLookAway(away) {
+  if (away && !state.isUserLookingAway) {
+      state.isUserLookingAway = true;
+  } else if (!away && state.isUserLookingAway) {
+      state.isUserLookingAway = false;
+  }
+}
+
+function hideCameraFeed() {
+    const elementsToHide = ["webgazerVideoContainer", "webgazerVideoFeed", "webgazerFaceFeedbackBox"];
+    elementsToHide.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = "none";
+    });
+}
+
+// --- Scene: Calibration ---
+scene("calibrate", () => {
+    const overlay = document.getElementById("calib-overlay");
+    const beginBtn = document.getElementById("begin-btn");
+    const pointsGroup = document.getElementById("points-group");
+    const points = document.querySelectorAll(".calib-point");
+    
+    let pointsLeft = points.length;
+    const CLICKS_PER_POINT = 10;
+
+    overlay.style.display = "flex";
+
+    beginBtn.onclick = async () => {
+        document.getElementById("start-btn-container").style.display = "none";
+        pointsGroup.style.display = "block";
+        await startWebGazer();
+    };
+
+    points.forEach(pt => {
+        pt.setAttribute("data-clicks", 0);
+        pt.innerText = CLICKS_PER_POINT;
+
+        pt.onclick = (e) => {
+            webgazer.recordScreenPosition(e.clientX, e.clientY, 'click');
+
+            let clicks = parseInt(pt.getAttribute("data-clicks")) + 1;
+            pt.setAttribute("data-clicks", clicks);
+            pt.innerText = CLICKS_PER_POINT - clicks;
+
+            if (clicks >= CLICKS_PER_POINT) {
+                pt.style.visibility = "hidden";
+                pointsLeft--;
+            }
+
+            if (pointsLeft <= 0) {
+                hideCameraFeed();
+                go("main");
+            }
+        };
+    });
+
+    onSceneLeave(() => {
+        overlay.style.display = "none";
+    });
+});
 
 scene("menu",()=>{
   add([pos(width()/4,height()/4),
@@ -74,7 +211,7 @@ scene("menu",()=>{
 }
 
 // Adds the buttons with the function we added
-addButton("Start", vec2(width()/2, height()/1.5), () => go("calibrate"));
+addButton("Start", vec2(width()/2, height()/1.5), () => go("main")); //CHANGE BACK TO CALIBRATE LATER
 })
 go("menu")
 
@@ -90,6 +227,7 @@ scene("main",()=>{
   const scenary = add([
     sprite("bed"),
   ]);
+
   onLoad(() => {
   scenary.scale = vec2(
     width() / scenary.width,
@@ -100,10 +238,89 @@ scene("main",()=>{
   // 3. Pet Sprite (Added last so it stays on top)
   const pet = add([
     sprite("gdog"),
+    scale(.5,.5),
     pos(center()),
-    anchor("center"), // Centers the dog perfectly
+    anchor("center"),
+    opacity(1), // <-- FIX: Add the opacity component
+]);
+
+function addButton(
+  txt = "Pause",
+  p = vec2(200, 100),
+  f = () => debug.log("hello"),
+  
+) {
+  // add a parent background object
+  const btn = add([
+      rect(240, 80, { radius: 8 }),
+      pos(p),
+      area(),
+      scale(1),
+      anchor("center"),
+      outline(4),
+      color(255, 161, 161),
   ]);
 
+  // add a child object that displays the text
+  btn.add([
+      text(txt),
+      anchor("center"),
+      color(0, 0, 0),
+  ]);
+
+  // onHoverUpdate() comes from area() component
+  // it runs every frame when the object is being hovered
+  btn.onHoverUpdate(() => {
+      const t = time() * 10;
+      btn.scale = vec2(1.2);
+      setCursor("pointer");
+  });
+  // onHoverEnd() comes from area() component
+  // it runs once when the object stopped being hovered
+  btn.onHoverEnd(() => {
+      btn.scale = vec2(1);
+  });
+  // onClick() comes from area() component
+  // it runs once when the object is clicked
+  btn.onClick(f);
+
+  return btn;
+}
+
+// Adds the buttons with the function we added
+addButton("Pause", vec2(width()/2, height()/1.1), () => {
+
+}); //THIS WILL PAUSE THE TRACKING
+addButton("",vec2(0,height()/2),()=>{})
+
+
+
+
+
+
+
+
+
+// Local state to track transitions and prevent spamming debug logs
+let wasLookingAway = false;
+
+// FIX: Use Kaplay's idiomatic game loop to poll the WebGazer state
+onUpdate(() => {
+    // Trigger: User just looked away
+    if (state.isUserLookingAway && !wasLookingAway) {
+        pet.opacity = 0.5; // <-- FIX: Use 'pet', not 'dog'
+        debug.log("Where did you go?");
+        console.log("AWAY");
+        wasLookingAway = true;
+    } 
+    // Trigger: User just returned
+    else if (!state.isUserLookingAway && wasLookingAway) {
+        pet.opacity = 1;
+        debug.log("Welcome back!");
+        console.log("RETURNED");
+        wasLookingAway = false;
+    }
+});
   function updateSizes() {
     // Update white background
     background.width = width();
