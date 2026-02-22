@@ -216,8 +216,8 @@ scene("calibrate", () => {
 });
 
 scene("menu",()=>{
-  add([pos(width()/4.4,height()/4),
-    text("PLACE HOLDER TITLE",{
+  add([pos(width()/10.4,height()/4),
+    text("FUZZY WUZZY STUDY BUDDYS",{
       font:"font",
       size: width() / 25,
       letterSpacing: 15,
