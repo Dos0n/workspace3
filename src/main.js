@@ -260,7 +260,7 @@ scene("menu",()=>{
 addButton("graydog", vec2(width()/5, height()/1.5),.5, () =>{//CHANGE BACK TO CALIBRATE LATER
   currentPet[0] = "graydog";
   currentPet[1] = "sadgraydog";
-  go("main")
+  go("calibrate")
 }); 
 addButton("beigedog", vec2(width()/2, height()/1.5),.5, () => {
   currentPet[0] = "beigedog";
