@@ -25,7 +25,7 @@ loadSprite("beigedog", "/assets/sprites/beigedog.png");
 loadSprite("cat", "/assets/sprites/cat.png");
 loadSprite("crybeigedog", "/assets/sprites/crybeigedog.png");
 loadSprite("crycat", "/assets/sprites/crycat.png");
-loadSprite("gdog", "/assets/sprites/gdog.png");
+loadSprite("graydog", "/assets/sprites/graydog.png");
 loadSprite("glassesgraydog", "/assets/sprites/glassesgraydog.png");
 loadSprite("hamster", "/assets/sprites/hamster.png");
 loadSprite("heartbeigedog", "/assets/sprites/heartbeigedog.png");
@@ -38,27 +38,41 @@ loadSprite("stargraydog", "/assets/sprites/stargraydog.png");
 loadSprite("toastbeigedog", "/assets/sprites/toastbeigedog.png");
 loadSprite("toastcat", "/assets/sprites/toastcat.png");
 loadSprite("toastgraydog", "/assets/sprites/toastgraydog.png");
-loadSprite("beigedogglasses", "/assets/sprites/beigedogglasses.png");
+loadSprite("glassesbeigedog", "/assets/sprites/glassesbeigedog.png");
 loadSprite("catglasses", "/assets/sprites/catglasses.png");
 let currentPet = ["",""]
-let gdogDict = {
+
+let accessoryDict = {
   "glassesgraydog" : 0,
   "heartgraydog" : 0,
   "toastgraydog" : 0,
-  "stargraydog":0
-}
-let beigedog = {
-  "beigedogglasses" : 0,
+  "stargraydog":0,
+  "glassesbeigedog" : 0,
   "heartbeigedog" : 0,
   "toastbeigedog" : 0,
-  "starbeigedog": 0
-}
-let cat = {
+  "starbeigedog": 0,
   "catglasses" : 0,
   "heartcat" : 0,
   "toastcat" : 0,
   "starcat" : 0
 }
+
+/*
+assume accessory = name of accessory got from button from shop
+if(accessoryDict[accessory + currentPet[0]] == 0){
+  if(state.money > 10){
+    state.money -= 10
+    accessoryDict[accessory + currentPet[0]] = 1
+    currentPet[0] = accessoryDict[accessory + currentPet[0]]
+  }
+}
+else{
+  currentPet[0] = accessoryDict[accessory + currentPet[0]]
+  }
+
+
+
+*/
 // --- Global Tracking State ---
 const state = {
     posX: 0,              // Smoothed Screen X (Pixels)
@@ -215,7 +229,7 @@ scene("menu",()=>{
   ]);
 
   function addButton(
-    name = "gdog",
+    name = "graydog",
     p = vec2(200, 100),
     s = 1,
     f = () => debug.log("hello"),
@@ -240,8 +254,8 @@ scene("menu",()=>{
 }
 
 // Adds the buttons with the function we added
-addButton("gdog", vec2(width()/5, height()/1.5),.5, () =>{//CHANGE BACK TO CALIBRATE LATER
-  currentPet[0] = "gdog";
+addButton("graydog", vec2(width()/5, height()/1.5),.5, () =>{//CHANGE BACK TO CALIBRATE LATER
+  currentPet[0] = "graydog";
   currentPet[1] = "sadgraydog";
   go("calibrate")
 }); 
@@ -384,7 +398,7 @@ scene("shop",()=>{
     scale(.3,.3),
     pos(width()/2,(height()/2)-78),
     anchor("center"),
-    opacity(1), // <-- FIX: Add the opacity component
+    opacity(1),
   ])
   const textbox = add([
     rect(width()-90, (height() / 2)-100, {radius: 20}), // Shape: Full width, half height
