@@ -11,7 +11,7 @@ const k = kaplay({
 // --- Load Assets ---
 loadSprite("bed", "/assets/sprites/bed.png");
 loadSprite("gdog", "/assets/sprites/gdog.png");
-
+loadSprite("shop","/assets/icons/shop.png")
 // --- Global Tracking State ---
 const state = {
     posX: 0,              // Smoothed Screen X (Pixels)
@@ -247,12 +247,12 @@ scene("main",()=>{
 function addButton(
   txt = "Pause",
   p = vec2(200, 100),
+  s = vec2(240,80),
   f = () => debug.log("hello"),
-  
 ) {
   // add a parent background object
   const btn = add([
-      rect(240, 80, { radius: 8 }),
+      rect(s.x, s.y, { radius: 8 }),
       pos(p),
       area(),
       scale(1),
@@ -288,10 +288,16 @@ function addButton(
 }
 
 // Adds the buttons with the function we added
-addButton("Pause", vec2(width()/2, height()/1.1), () => {
+addButton("Pause", vec2(width()/2, height()/1.1),vec2(240,80),() => {
 
 }); //THIS WILL PAUSE THE TRACKING
-addButton("",vec2(0,height()/2),()=>{})
+
+
+addButton("",vec2(0 + 50,height()/2),vec2(50,50),()=>{}).add([
+  sprite("shop"),
+  pos(center()),
+  anchor("center")
+])
 
 
 
