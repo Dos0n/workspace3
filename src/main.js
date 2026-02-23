@@ -141,6 +141,8 @@ async function startWebGazer() {
   handleLookAway(isOffScreen);
   }).begin();
 
+
+
   webgazer.showVideoPreview(true)
           .showFaceFeedbackBox(true)
           .showPredictionPoints(false);
@@ -148,6 +150,18 @@ async function startWebGazer() {
     if (videoContainer) {
         videoContainer.style.opacity = "1";
     }
+        add([pos(0,height()-200),
+        text("Keep your eyes locked on each red dot and click it until it disapears (make sure your camera has a good view of your face)",{
+            font:"Sans-Serif",
+            size: width() / 50,
+            width: width() - 10,
+            letterSpacing: 5,
+            allign: "center",
+            transform: (idx, ch) => ({
+                color: rgb(0,0,0)
+            }),
+        })
+    ]);
 }
 
 function handleLookAway(away) {
@@ -175,7 +189,7 @@ scene("calibrate", () => {
     const beginBtn = document.getElementById("begin-btn");
     const pointsGroup = document.getElementById("points-group");
     const points = document.querySelectorAll(".calib-point");
-    
+
     let pointsLeft = points.length;
     const CLICKS_PER_POINT = 10;
 
@@ -184,7 +198,20 @@ scene("calibrate", () => {
     beginBtn.onclick = async () => {
         document.getElementById("start-btn-container").style.display = "none";
         pointsGroup.style.display = "block";
+        const fyi = add([pos(0,200),
+            text("(Regression model takes a while to load)",{
+                font:"Sans-Serif",
+                size: width() / 25,
+                width: width() - 10,
+                letterSpacing: 15,
+                allign: "center",
+                transform: (idx, ch) => ({
+                    color: rgb(0,0,0)
+                }),
+            })
+        ]);
         await startWebGazer();
+        fyi.destroy()
     };
 
     points.forEach(pt => {
@@ -365,22 +392,18 @@ addButton("",vec2(100,height()/2),vec2(150,150),()=>{go("shop")}).add([
   scale(.2,.2),
   pos(-85,-85)
 ])
-// Keep track of the current "active" message version
 let messageCounter = 0;
 let activeLabel = null;
 
 async function showtext(message, speed = 0.05) {
-    // 1. Increment the counter so old loops know to stop
     messageCounter++;
     const myId = messageCounter;
 
-    // 2. Clean up the previous label if it exists
     if (activeLabel) {
         destroy(activeLabel);
         activeLabel = null;
     }
 
-    // 3. Create the new label
     activeLabel = add([
         text("", { 
             size: 24, 
@@ -393,13 +416,9 @@ async function showtext(message, speed = 0.05) {
         z(10),
     ]);
 
-    // 4. Typing Loop
     for (let i = 0; i < message.length; i++) {
-        // CHECK: If a newer call has started (myId is no longer current),
-        // stop this specific loop immediately.
         if (myId !== messageCounter) return;
-        
-        // CHECK: Safety check to ensure the label still exists
+
         if (!activeLabel.exists()) return;
 
         activeLabel.text += message[i];
