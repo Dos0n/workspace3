@@ -9,37 +9,36 @@ const k = kaplay({
 });
 
 // --- Load Assets ---
-loadSprite("bed", "/assets/sprites/bed.png");
-loadFont("font","/assets/fonts/menufont.ttf")
-loadSprite("shop","/assets/icons/shop.png")
-loadSprite("glasses", "/assets/icons/glasses.png");
-loadSprite("heart", "/assets/icons/heart.png");
-loadSprite("money", "/assets/icons/money.png");
-loadSprite("shelves", "/assets/icons/shelves.png");
-loadSprite("shop", "/assets/icons/shop.png"); 
-loadSprite("star", "/assets/icons/star.png");
-loadSprite("toast", "/assets/icons/toast.png");
-//PETS
-loadSprite("bed", "/assets/sprites/bed.png");
-loadSprite("beigedog", "/assets/sprites/beigedog.png");
-loadSprite("cat", "/assets/sprites/cat.png");
-loadSprite("crybeigedog", "/assets/sprites/crybeigedog.png");
-loadSprite("crycat", "/assets/sprites/crycat.png");
-loadSprite("graydog", "/assets/sprites/graydog.png");
-loadSprite("glassesgraydog", "/assets/sprites/glassesgraydog.png");
-loadSprite("hamster", "/assets/sprites/hamster.png");
-loadSprite("heartbeigedog", "/assets/sprites/heartbeigedog.png");
-loadSprite("heartcat", "/assets/sprites/heartcat.png");
-loadSprite("heartgraydog", "/assets/sprites/heartgraydog.png");
-loadSprite("sadgraydog", "/assets/sprites/sadgraydog.png");
-loadSprite("starbeigedog", "/assets/sprites/starbeigedog.png");
-loadSprite("starcat", "/assets/sprites/starcat.png");
-loadSprite("stargraydog", "/assets/sprites/stargraydog.png");
-loadSprite("toastbeigedog", "/assets/sprites/toastbeigedog.png");
-loadSprite("toastcat", "/assets/sprites/toastcat.png");
-loadSprite("toastgraydog", "/assets/sprites/toastgraydog.png");
-loadSprite("glassesbeigedog", "/assets/sprites/glassesbeigedog.png");
-loadSprite("catglasses", "/assets/sprites/catglasses.png");
+loadSprite("bed", "assets/sprites/bed.png");
+loadFont("font", "assets/fonts/menufont.ttf");
+loadSprite("shop", "assets/icons/shop.png");
+loadSprite("glasses", "assets/icons/glasses.png");
+loadSprite("heart", "assets/icons/heart.png");
+loadSprite("money", "assets/icons/money.png");
+loadSprite("shelves", "assets/icons/shelves.png");
+loadSprite("star", "assets/icons/star.png");
+loadSprite("toast", "assets/icons/toast.png");
+
+// PETS
+loadSprite("beigedog", "assets/sprites/beigedog.png");
+loadSprite("cat", "assets/sprites/cat.png");
+loadSprite("crybeigedog", "assets/sprites/crybeigedog.png");
+loadSprite("crycat", "assets/sprites/crycat.png");
+loadSprite("graydog", "assets/sprites/graydog.png");
+loadSprite("glassesgraydog", "assets/sprites/glassesgraydog.png");
+loadSprite("hamster", "assets/sprites/hamster.png");
+loadSprite("heartbeigedog", "assets/sprites/heartbeigedog.png");
+loadSprite("heartcat", "assets/sprites/heartcat.png");
+loadSprite("heartgraydog", "assets/sprites/heartgraydog.png");
+loadSprite("sadgraydog", "assets/sprites/sadgraydog.png");
+loadSprite("starbeigedog", "assets/sprites/starbeigedog.png");
+loadSprite("starcat", "assets/sprites/starcat.png");
+loadSprite("stargraydog", "assets/sprites/stargraydog.png");
+loadSprite("toastbeigedog", "assets/sprites/toastbeigedog.png");
+loadSprite("toastcat", "assets/sprites/toastcat.png");
+loadSprite("toastgraydog", "assets/sprites/toastgraydog.png");
+loadSprite("glassesbeigedog", "assets/sprites/glassesbeigedog.png");
+loadSprite("catglasses", "assets/sprites/catglasses.png");
 let currentPet = ["",""]
 
 let accessoryDict = {
